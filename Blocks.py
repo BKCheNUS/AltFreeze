@@ -10,7 +10,34 @@ import torch.nn as nn
 
 
 
-
+class CNNBlocks(nn.Module):
+	def __init__(self,kernelsizes,channels)
+		super(CNNBlock1, self).__init__()
+		a = kernelsizes[0]
+		b = kernelsizes[1]
+		c1 = channels[1]
+		c2 = channels[2]
+		c3 = channels[3]
+		self.conv1 = nn.Conv2d(c1, c2, kernel_size = a, padding = 1)
+		self.batchnorm1 = nn.BatchNorm2d(48)		
+		self.conv2 = nn.Conv2d(c2,c4 , kernel_size = b, padding = 1)
+		self.batchnorm2 = nn.BatchNorm2d(96)		
+		self.dropout = nn.Dropout(0.4)
+		
+	def init_weights(m):
+		torch.nn.init.xavier_normal_(m.weight)
+		m.bias.data.fill_(0.01)
+	
+	def forward(self, x):
+		x = self.conv1(x)
+		x = self.batchnorm1(x)
+		x = F.relu(x)
+		x = self.conv2(x)
+		x = self.batchnorm2(x)
+		x = F.relu(F.max_pool2d(x,2))
+		#x = self.dropout(x)
+		return x	
+			
 
 class CNNBlock1(nn.Module):
 	def __init__(self):
@@ -104,15 +131,19 @@ cnnblock2 = CNNBlock2()
 cnnblock3 = CNNBlock3()
 mlpblock = MLPBlock()
 
-#Combine these blocks
+
+#do we want to put def outside?
 
 class EnsembleModel(nn.Module):
 	def __init__(self):
 		super(EnsembleModel, self).__init__()
-		self.cnnblock1 = cnnblock1
-		self.cnnblock2 = cnnblock2
-		self.cnnblock3 = cnnblock3
-		self.mlpblock = mlpblock
+		self.cnnblock1 = CNNBlocks([3,3],[3,48,96])
+		self.cnnblock1.apply(init_weights)
+		self.cnnblock2 = CNNBlocks([4,4],[96,192,384])
+		self.cnnblock2.apply(init_weights)
+		self.cnnblock3 = CNNBlocks([4,4],[384,384,384])
+		self.cnnblock3.apply(init_weights)
+		self.mlpblock = MLPBlock()
     
 	def forward(self, x):
 		x1 = self.cnnblock1(x)
