@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from matplotlib.offsetbox import AnchoredText
 
 
-class Training():
+class Trainingfn():
 	
 	def __init__(self, modl, dataset,crit):
 		self.modl = modl
