@@ -126,10 +126,10 @@ class MLPBlock(nn.Module):
 mlpblock = MLPBlock()
 
 
-cnnblock1 = CNNBlock1()
-cnnblock2 = CNNBlock2()
-cnnblock3 = CNNBlock3()
-mlpblock = MLPBlock()
+#cnnblock1 = CNNBlock1()
+#cnnblock2 = CNNBlock2()
+#cnnblock3 = CNNBlock3()
+#mlpblock = MLPBlock()
 
 
 #do we want to put def outside?
