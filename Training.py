@@ -31,4 +31,6 @@ class Trainingfn():
 	            #print stats
 			running_loss += loss.item()
 			return(running_loss/len(self.dataset))
+	def test_nan():
+		assert torch.isnan(train(self)) == False
 		
