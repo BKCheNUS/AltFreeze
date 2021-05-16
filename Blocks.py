@@ -11,7 +11,7 @@ import torch.nn as nn
 
 
 class CNNBlocks(nn.Module):
-	def __init__(self,kernelsizes,channels)
+	def __init__(self,kernelsizes,channels):
 		super(CNNBlock1, self).__init__()
 		a = kernelsizes[0]
 		b = kernelsizes[1]
