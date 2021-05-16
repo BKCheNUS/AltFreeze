@@ -19,6 +19,7 @@ from Blocks import CNNBlock1
 from Blocks import CNNBlock2
 from Blocks import CNNBlock3
 from Blocks import MLPBlock
+from Training import Trainingfn
 #set seed for reproducibility, could do extra for cuda but would slow performance
 random.seed(12345)
 torch.manual_seed(12345)
@@ -132,26 +133,27 @@ for epoch in range(nepochs):
         
 		for param in mlpblock.parameters():
 			param.requires_grad_(True)
-        
-
-		for i, data in enumerate(train_loader1,0):
-			inputs, set2labels = data[0].to(device), data[1].to(device)
+        	trainingval = Trainingfn.train(ensemblemodel, train_loader1, criterion)
+		trainingloss.append(trainingval)
+		print('value',trainingval)
+#		for i, data in enumerate(train_loader1,0):
+#			inputs, set2labels = data[0].to(device), data[1].to(device)
 	            
-			optimizer.zero_grad()
-	            
-			outputs = ensemblemodel(inputs)
-			loss = criterion(outputs, set2labels)
-			loss.backward()
-			optimizer.step()
-	            #print stats
-			running_loss += loss.item()
-			#Training loss once at the end of each epoch
-			if i%450 == 449:
-				trainingloss.append(running_loss/450)
-				print(running_loss/450)
-				running_loss = 0.0
-			#if i%4500 == 4499:
-				#trainingloss.append(running_loss/4500)
+#			optimizer.zero_grad()
+#	            
+#			outputs = ensemblemodel(inputs)
+#			loss = criterion(outputs, set2labels)
+#			loss.backward()
+#			optimizer.step()
+#	            #print stats
+#			running_loss += loss.item()
+#			#Training loss once at the end of each epoch
+#			if i%450 == 449:
+#				trainingloss.append(running_loss/450)
+#				print(running_loss/450)
+#				running_loss = 0.0
+#			#if i%4500 == 4499:
+#				#trainingloss.append(running_loss/4500)
 				#print(running_loss/4500)
 				#running_loss = 0.0
 	
@@ -170,24 +172,26 @@ for epoch in range(nepochs):
         
 		for param in mlpblock.parameters():
 			param.requires_grad_(False)
-
+        	trainingval = Trainingfn.train(ensemblemodel, train_loader2, criterion)
+		trainingloss.append(trainingval)
+		print('value',trainingval)
 		
-		for i, data in enumerate(train_loader2,0):
-			inputs, set2labels = data[0].to(device), data[1].to(device)
+#		for i, data in enumerate(train_loader2,0):
+#			inputs, set2labels = data[0].to(device), data[1].to(device)
+#	            
+#			optimizer.zero_grad()
 	            
-			optimizer.zero_grad()
-	            
-			outputs = ensemblemodel(inputs)
-			loss = criterion(outputs, set2labels)
-			loss.backward()
-			optimizer.step()
+#			outputs = ensemblemodel(inputs)
+#			loss = criterion(outputs, set2labels)
+#			loss.backward()
+#			optimizer.step()
 	            #print stats
-			running_loss += loss.item()
+#			running_loss += loss.item()
 			#Training loss once at the end of each epoch
-			if i%450 == 449:
-				trainingloss.append(running_loss/450)
-				print(running_loss/450)
-				running_loss = 0.0
+#			if i%450 == 449:
+#				trainingloss.append(running_loss/450)
+#				print(running_loss/450)
+#				running_loss = 0.0
 			#if i%4500 == 4499:
 				#trainingloss.append(running_loss/4500)
 				#print(running_loss/4500)
@@ -209,26 +213,28 @@ for epoch in range(nepochs):
 #			param.requires_grad_(True)
 
 		
-		for i, data in enumerate(train_loader1,0):
-			inputs, set2labels = data[0].to(device), data[1].to(device)
+#		for i, data in enumerate(train_loader1,0):
+#			inputs, set2labels = data[0].to(device), data[1].to(device)
+#	            
+#			optimizer.zero_grad()
 	            
-			optimizer.zero_grad()
-	            
-			outputs = ensemblemodel(inputs)
-			loss = criterion(outputs, set2labels)
-			loss.backward()
-			optimizer.step()
+#			outputs = ensemblemodel(inputs)
+#			loss = criterion(outputs, set2labels)
+#			loss.backward()
+#			optimizer.step()
 	            #print stats
-			running_loss += loss.item()
-			#Training loss once at the end of each epoch
-			if i%450 == 449:
-				trainingloss.append(running_loss/450)
-				print(running_loss/450)
-				running_loss = 0.0
+#			running_loss += loss.item()
+#			#Training loss once at the end of each epoch
+#				trainingloss.append(running_loss/450)
+#				print(running_loss/450)
+#				running_loss = 0.0
 			#if i%4500 == 4499:
 				#trainingloss.append(running_loss/4500)
 				#print(running_loss/4500)
 				#running_loss = 0.0
+        	trainingval = Trainingfn.train(ensemblemodel, train_loader1, criterion)
+		trainingloss.append(trainingval)
+		print('value',trainingval)
 	
 	ensemblemodel.eval()
 	running_loss2 = 0.0
