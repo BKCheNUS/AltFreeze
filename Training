@@ -1,0 +1,48 @@
+import torch
+import numpy as np
+import torchvision
+import torchvision.datasets as datasets
+import torchvision.transforms as transforms
+from torch.utils.data.sampler import SubsetRandomSampler
+import torch.nn.functional as F
+import torch.nn as nn
+import torch.optim as optim
+import random
+import matplotlib.pyplot as plt
+from matplotlib.offsetbox import AnchoredText
+device = torch.device("cuda:0")
+
+
+
+# In[15]:
+
+
+criterion = nn.CrossEntropyLoss()
+
+class Trainingfn():
+
+    def __init__(self, modl, dataset,crit,opt):
+        self.modl = modl
+        self.dataset = dataset
+        self.crit = crit
+        self.opt = opt
+        self.len = len(self.dataset)
+        
+    def train(self):
+        running_loss = 0
+        for i, data in enumerate(self.dataset,0):
+            inputs, set2labels = data[0].to(device), data[1].to(device)
+       
+            self.opt.zero_grad()
+	            
+            outputs = self.modl(inputs)
+            loss = self.crit(outputs, set2labels)
+            loss.backward()
+            self.opt.step()
+        #print stats
+            running_loss += loss.item()
+            if i%self.len == self.len-1:
+                return(running_loss/self.len)
+                running_loss = 0.0
+    def test_nan():
+        assert torch.isnan(train(self)) == False
