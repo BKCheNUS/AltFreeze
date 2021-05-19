@@ -97,11 +97,11 @@ print("train:",train_len, "test:", test_len)
 
 
 np.random.shuffle(index)
-split1 = int(0.45*train_len)
-split2 = int(0.9*train_len)
+split1 = int(0.25*train_len)
+split2 = int(0.6*train_len)
 train_index1 = index[:split1]
 train_index2 = index[split1:2*split1]
-val_index = index[2*split1:]
+val_index = index[2*split1:split2]
 index2 = list(range(test_len))
 np.random.shuffle(index2)
 split3 = int(0.1 * test_len)
@@ -160,7 +160,7 @@ validationloss = []
 testaccuracy = []
 
 
-# In[ ]:
+# In[15]:
 
 
 #print("Time = " time.perf_counter())
@@ -169,121 +169,50 @@ for epoch in range(nepochs):
     running_loss = 0.0
     
     
-    if epoch%2 == 0 & epoch > 75:
-        for param in cnnblock1.parameters():
+    if epoch%2 == 0 and epoch > 75:
+        for param in ensemblemodel.cnnblock1.parameters():
             param.requires_grad_(False)
         
-        for param in cnnblock2.parameters():
+        for param in ensemblemodel.cnnblock2.parameters():
             param.requires_grad_(False)
         
-        for param in cnnblock3.parameters():
+        for param in ensemblemodel.cnnblock3.parameters():
             param.requires_grad_(True)
         
-        for param in mlpblock.parameters():
+        for param in ensemblemodel.mlpblock.parameters():
             param.requires_grad_(True)
+        print("test") 
         trainingval = Trainingfunction1.train()
         trainingloss.append(trainingval)
         print("value:",trainingval)
-        #for i, data in enumerate(train_loader1,0):
-#			inputs, set2labels = data[0].to(device), data[1].to(device)
-	            
-#			optimizer.zero_grad()
-#	            
-#			outputs = ensemblemodel(inputs)
-#			loss = criterion(outputs, set2labels)
-#			loss.backward()
-#			optimizer.step()
-#	            #print stats
-#			running_loss += loss.item()
-#			#Training loss once at the end of each epoch
-#			if i%450 == 449:
-#				trainingloss.append(running_loss/450)
-#				print(running_loss/450)
-#				running_loss = 0.0
-#			#if i%4500 == 4499:
-#				#trainingloss.append(running_loss/4500)
-				#print(running_loss/4500)
-				#running_loss = 0.0
-	
-		#Validation loss once at end of epoch
-	                
+                
         
-    if epoch%2 == 1 & epoch > 75:
-        for param in cnnblock1.parameters():
+    elif epoch%2 == 1 and epoch > 75:
+        for param in ensemblemodel.cnnblock1.parameters():
             param.requires_grad_(True)
         
-        for param in cnnblock2.parameters():
+        for param in ensemblemodel.cnnblock2.parameters():
             param.requires_grad_(True)
 
-        for param in cnnblock3.parameters():
+        for param in ensemblemodel.cnnblock3.parameters():
             param.requires_grad_(False)
         
-        for param in mlpblock.parameters():
+        for param in ensemblemodel.mlpblock.parameters():
             param.requires_grad_(False)
+        print("test") 
         trainingval = Trainingfunction2.train()
         trainingloss.append(trainingval)
         print("value:",trainingval)
         
-#		for i, data in enumerate(train_loader2,0):
-#			inputs, set2labels = data[0].to(device), data[1].to(device)
-#	            
-#			optimizer.zero_grad()
-	            
-#			outputs = ensemblemodel(inputs)
-#			loss = criterion(outputs, set2labels)
-#			loss.backward()
-#			optimizer.step()
-	            #print stats
-#			running_loss += loss.item()
-			#Training loss once at the end of each epoch
-#			if i%450 == 449:
-#				trainingloss.append(running_loss/450)
-#				print(running_loss/450)
-#				running_loss = 0.0
-			#if i%4500 == 4499:
-				#trainingloss.append(running_loss/4500)
-				#print(running_loss/4500)
-				#running_loss = 0.0
-	
-		#Validation loss once at end of epoch
 
-    if epoch <= 75:
-#		for param in cnnblock1.parameters():
-#			param.requires_grad_(True)
-        
-#		for param in cnnblock2.parameters():
-#        		param.requires_grad_(True)
-        
-#		for param in cnnblock3.parameters():
-#			param.requires_grad_(True)
-        
-#		for param in mlpblock.parameters():
-#			param.requires_grad_(True)
+    else:
 
-		
-#		for i, data in enumerate(train_loader1,0):
-#			inputs, set2labels = data[0].to(device), data[1].to(device)
-#	            
-#			optimizer.zero_grad()
-	            
-#			outputs = ensemblemodel(inputs)
-#			loss = criterion(outputs, set2labels)
-#			loss.backward()
-#			optimizer.step()
-	            #print stats
-#			running_loss += loss.item()
-#			#Training loss once at the end of each epoch
-#				trainingloss.append(running_loss/450)
-#				print(running_loss/450)
-#				running_loss = 0.0
-			#if i%4500 == 4499:
-				#trainingloss.append(running_loss/4500)
-				#print(running_loss/4500)
-				#running_loss = 0.0
         trainingval = Trainingfunction1.train()
         trainingloss.append(trainingval)
         print("value:",trainingval)
 
+    
+        
     ensemblemodel.eval()
     running_loss2 = 0.0
     for i,data in enumerate(val_loader): 
@@ -322,8 +251,33 @@ for epoch in range(nepochs):
 print("finished training")
 
 
-# In[ ]:
+# In[16]:
 
 
+train1 = 12500
+train2 = 12500
+fig1, ax1 =plt.subplots()
+ax1.plot(trainingloss)
+ax1.plot(validationloss)
+plt.ylim([0,3])
+ax1.legend(["Training", "Validation"])
+ax1.set_xlabel("epochs", fontsize = 20)
+ax1.set_ylabel("training loss", fontsize = 20)
+anchored_text = AnchoredText('set1:{} set2:{} lr:{} \n optim:{} activ:{}'.format(train1,train2,learnrate,OPTIM,activation),loc='upper left', prop = dict(fontweight = "normal", size= 10))
+ax1.add_artist(anchored_text)
+plt.savefig('training_loss.png')
 
+
+# In[17]:
+
+
+fig1, ax1 =plt.subplots()
+ax1.plot(testaccuracy)
+ax1.legend(["Test"])
+plt.ylim([0.3,1])
+ax1.set_xlabel("epochs", fontsize = 20)
+ax1.set_ylabel("training loss", fontsize = 20)
+anchored_text = AnchoredText('set1:{} set2:{} lr:{} \n optim:{} activ:{}'.format(train1,train2,learnrate,OPTIM,activation),loc='lower right', prop = dict(fontweight = "normal", size= 10))
+ax1.add_artist(anchored_text)
+plt.savefig('testaccuracy.png')
 
